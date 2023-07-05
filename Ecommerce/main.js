@@ -37,22 +37,22 @@ cartList.map(function mapItems(items) {
 
 // Cart icon click function
 let itemsCart = [];
-let dataCard = "";
 function cartIcon() {
     const addedCartItems = document.querySelector(".cartitems");
     addedCartItems.classList.toggle("cartitems-active");
         if (itemsCart.length === 0) {
             document.querySelector(".listempty").innerHTML = `<img class="cart-empty-img" src="assets/empty-cart.png" alt="Empty cart image">`;
         } else {
+            let dataCard = "";
             dataCard += itemsCart.map(function addItemsToCart(items) {
-                const {id, name, price, image } = items;
+                const {id, name, price, image, countValue } = items;
                 dataCard += `<div  data-id="${id}">
                    <div class="cart-list d-flex align-items-center justify-content-between py-3">
                         <div class="cart-buttons">
                             <img src=${image} alt=""> 
-                            <button onclick="increment()">+</button>
-                            <button class="product-value">0</button>
-                            <button onclick="decrement()">-</button>
+                            <button class="minus" onclick="plus(${id}, event)">-</button>
+                            <button class="product-value">${countValue}</button>
+                            <button class="plus" onclick="plus(${id}, event)">+</button>
                         </div>
                        <div>
                            <h6><span>${name}</span></h6>
@@ -65,13 +65,7 @@ function cartIcon() {
             });
     }
 };
-let countValue = 1;
-function increment() {
-    document.querySelector(".product-value").innerText = countValue++;
-}
-function decrement() {
-    document.querySelector(".product-value").innerText = countValue--;
-}
+
 // Add to cart button function
 function itemsAdded(id) { 
     const selectedItems = cartList.find(function findItems(items) {
@@ -84,8 +78,8 @@ function itemsAdded(id) {
             setTimeout(() => {
                 document.querySelector(".toast-notification").classList.remove("toast-notification-active");
             }, 2000);
-           
         } else {
+            selectedItems.countValue = 1;
             itemsCart.push(selectedItems);
         }
     }
@@ -102,6 +96,28 @@ function buttonDelete(id) {
         itemsCart = filteredArray;
     document.querySelector(".quantity").innerText = itemsCart.length;
 };
+
+// Increment and Decrement the product quantity.
+
+function plus(id, event) {
+    const findList = itemsCart.find((items) => items.id === id);
+    if (findList) {
+        const productValue = document.querySelector(`[data-id="${id}"] .product-value`);
+        if (event.target.classList.contains("minus")) {
+            if (findList.countValue > 1) {
+                findList.countValue--;
+                productValue.innerText = findList.countValue;
+            }
+        } else if (event.target.classList.contains("plus")) {
+            findList.countValue++;
+            productValue.innerText = findList.countValue;
+        }
+    }
+};
+
+
+
+
 
 
 
